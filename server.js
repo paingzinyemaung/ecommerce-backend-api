@@ -21,10 +21,6 @@ const cookieParser = require('cookie-parser');
 // redis client
 const redisClient = require('./config/redisClient');
 
-// vercel cannot run listen function, so here invoke connectDB and redisClient.connect()
-connectDB();
-redisClient.connect();
-
 // security middleware
 app.use(helmet());
 
@@ -65,7 +61,9 @@ app.use(notFound);
 // global error handler
 app.use(errorHandler);
 
-// const PORT = ;
+// vercel cannot run listen function, so here invoke connectDB and redisClient.connect()
+connectDB();
+redisClient.connect();
 
 if (!process.env.vercel) {
   app.listen(process.env.PORT || 5000, () => {
