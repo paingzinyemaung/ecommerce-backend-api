@@ -18,6 +18,10 @@ const morgan = require('morgan');
 const helmet = require('helmet'); // filter data from headers,
 const cookieParser = require('cookie-parser');
 
+// vercel cannot run listen function, so here invoke connectDB and redisClient.connect()
+connectDB();
+redisClient.connect();
+
 // redis client
 const redisClient = require('./config/redisClient');
 
@@ -63,11 +67,13 @@ app.use(errorHandler);
 
 // const PORT = ;
 
-app.listen(process.env.PORT || 5000, () => {
-  connectDB();
-  redisClient.connect();
-  console.log(`ExpressJS server running on ${process.env.PORT}...`);
-});
+if (!process.env.vercel) {
+  app.listen(process.env.PORT || 5000, () => {
+    console.log(`ExpressJS server running on ${process.env.PORT}...`);
+  });
+}
+
+module.exports = app;
 
 // async global error handler
 process.on('unhandledRejection', (err) => {
