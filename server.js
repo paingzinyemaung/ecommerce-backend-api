@@ -18,12 +18,12 @@ const morgan = require('morgan');
 const helmet = require('helmet'); // filter data from headers,
 const cookieParser = require('cookie-parser');
 
+// redis client
+const redisClient = require('./config/redisClient');
+
 // vercel cannot run listen function, so here invoke connectDB and redisClient.connect()
 connectDB();
 redisClient.connect();
-
-// redis client
-const redisClient = require('./config/redisClient');
 
 // security middleware
 app.use(helmet());
