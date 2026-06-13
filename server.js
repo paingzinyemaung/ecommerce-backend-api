@@ -21,6 +21,9 @@ const cookieParser = require('cookie-parser');
 // redis client
 const redisClient = require('./config/redisClient');
 
+// Vercel Cloud ရဲ့ Proxy ဆာဗာကနေတစ်ဆင့် ဖြတ်လာတဲ့ အသုံးပြုသူတွေရဲ့ IP Address အစစ်အမှန် (Headers) တွေကို Express ကနေ "ယုံကြည်စိတ်ချစွာ ဖတ်ရှုခွင့်ပြုပါ" လို့ ခွင့်ပြုချက် ပေးလိုက်တာ
+app.set('trust proxy', 1);
+
 // security middleware
 app.use(helmet());
 
