@@ -55,6 +55,23 @@ app.get('/', (req, res) => {
 app.use(express.static('public'));
 app.use(morgan('dev')); // show api request as log
 
+// ဒေတာဘေ့စ်နှစ်ခုလုံးကို Request တိုင်းမှာ အိပ်မပျော်စေဘဲ အမြဲတမ်း Live ဖြစ်နေစေမယ့် Middleware
+app.use(async (req, res, next) => {
+  try {
+    // 1. MongoDB ချိတ်ဆက်မှုကို စစ်ဆေး/ချိတ်ဆက်ခြင်း
+    await connectDB();
+
+    // 2. Redis ချိတ်ဆက်မှုကို စစ်ဆေး/ချိတ်ဆက်ခြင်း
+    if (!redisClient.isOpen) {
+      await redisClient.connect();
+    }
+    next();
+  } catch (error) {
+    console.error('Database connection middleware error:', error);
+    res.status(500).json({ message: 'Internal Server Database Error' });
+  }
+});
+
 // main route
 app.use('/api/v1', Router);
 
@@ -64,9 +81,9 @@ app.use(notFound);
 // global error handler
 app.use(errorHandler);
 
-// vercel cannot run listen function, so here invoke connectDB and redisClient.connect()
-connectDB();
-redisClient.connect();
+// // vercel cannot run listen function, so here invoke connectDB and redisClient.connect()
+// connectDB();
+// redisClient.connect();
 
 if (!process.env.vercel) {
   app.listen(process.env.PORT || 5000, () => {
